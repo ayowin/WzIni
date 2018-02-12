@@ -22,8 +22,8 @@ struct IniItem
 
 struct IniSection
 {
-	std::string name; //¶ÎµÄÃû×Ö
-	std::vector<IniItem> items; //¶ÎµÄÄÚÈİ
+	std::string name; //æ®µçš„åå­—
+	std::vector<IniItem> items; //æ®µçš„å†…å®¹
 };
 
 WzIni::WzIni()
@@ -204,7 +204,7 @@ void WzIni::release()
 	{
 		delete i->second;
 	}
-	sections.clear(); //Çå³ımapÖĞµÄËùÓĞÊı¾İ
+	sections.clear(); //æ¸…é™¤mapä¸­çš„æ‰€æœ‰æ•°æ®
 }
 
 bool WzIni::parse()
@@ -214,14 +214,13 @@ bool WzIni::parse()
 	char buf[BUF_SIZE];
 	memset(buf, 0, BUF_SIZE);
 
-	//Ñ°ÕÒÊı¾İ
+	//å¯»æ‰¾æ•°æ®
 	bool findSection = true;
 	int begin = -1, end = -1;
 	IniSection* iniSection = NULL;
-	std::string sectionName = ""; //sectionÃû£¬´æ´¢IniSection£¬ÇÒmap¿É¸ù¾İ´ËÖµ»ñµÃIniSection*
+	std::string sectionName = ""; //sectionåï¼Œå­˜å‚¨IniSectionï¼Œä¸”mapå¯æ ¹æ®æ­¤å€¼è·å¾—IniSection*
 	std::string key = ""; //key
 	std::string value = ""; //value
-	std::string comment = ""; //comment
 
 	while (!feof(fp))
 	{
@@ -229,7 +228,7 @@ bool WzIni::parse()
 		{
 			//std::cout << buf;
 
-			//½âÎöµ±Ç°ĞĞÊÇ·ñº¬ÓĞ¶ÎÃû,¼´£º[section]
+			//è§£æå½“å‰è¡Œæ˜¯å¦å«æœ‰æ®µå,å³ï¼š[section]
 			for (int i = 0; i < strlen(buf); i++)
 			{
 				if (buf[i] == '[') begin = i;
@@ -240,16 +239,16 @@ bool WzIni::parse()
 			begin = -1;
 			end = -1;
 
-			if (findSection) //½âÎö¶ÎÃû
+			if (findSection) //è§£ææ®µå
 			{
-				sectionName.clear(); //Çå¿ÕÔ­ÓĞsectionName
+				sectionName.clear(); //æ¸…ç©ºåŸæœ‰sectionName
 
 				for (int i = 0; i < strlen(buf); i++)
 				{
 					if (buf[i] == '[') begin = i;
 					if (begin >= 0 && buf[i] == ']')end = i;
 				}
-				if (begin >= 0 && end - begin >1) //[]¿ÕÖµ²»½âÎö
+				if (begin >= 0 && end - begin >1) //[]ç©ºå€¼ä¸è§£æ
 				{
 					for (int i = begin + 1; i <= end - 1; i++)
 					{
@@ -264,14 +263,14 @@ bool WzIni::parse()
 					end = -1;
 				}
 			}
-			else//½âÎökey¡¢valueºÍcomment
+			else//è§£ækeyã€value
 			{	
 				if (!sectionName.empty())
 				{
-					key.clear(); //Çå¿ÕÔ­key
-					value.clear(); //Çå¿ÕÔ­value
+					key.clear(); //æ¸…ç©ºåŸkey
+					value.clear(); //æ¸…ç©ºåŸvalue
 
-					//ÏÈ½âÎö¡°=¡±ºÅ£¬¸ÄĞĞÓĞ¡°=¡±ÔòÅĞ¶¨Îªkey/value
+					//å…ˆè§£æâ€œ=â€å·ï¼Œæ”¹è¡Œæœ‰â€œ=â€åˆ™åˆ¤å®šä¸ºkey/value
 					for (int i = 0; i < strlen(buf); i++)
 					{
 						if (buf[i] == '=')
@@ -281,25 +280,25 @@ bool WzIni::parse()
 							break;
 						}
 					}
-					//»ñÈ¡key¡¢value
-					if (begin >= 0 && end >= 0) //»ñÈ¡key
+					//è·å–keyã€value
+					if (begin >= 0 && end >= 0) //è·å–key
 					{
 						for (int i = begin; i < end; i++)
 						{
 							key.push_back(buf[i]);
 						}
 					}
-					if (begin >= 0 && end >= 0 && end < strlen(buf) - 1) //»ñÈ¡value
+					if (begin >= 0 && end >= 0 && end < strlen(buf) - 1) //è·å–value
 					{
 						begin = end + 1;
 						end = strlen(buf);
 						for (int i = begin; i < end; i++)
 						{
-							if (buf[i] == '\n')break; //»»ĞĞ·û²»»ñÈ¡
+							if (buf[i] == '\n')break; //æ¢è¡Œç¬¦ä¸è·å–
 							value.push_back(buf[i]);
 						}
 					}
-					if (key.compare("")) //Èç¹ûkey²»Îª¿Õ
+					if (key.compare("")) //å¦‚æœkeyä¸ä¸ºç©º
 					{
 						sections[sectionName]->items.push_back(IniItem(key, value));
 						//std::cout << key << std::endl;
@@ -313,7 +312,7 @@ bool WzIni::parse()
 	}
 
 	fclose(fp);
-	return false;
+	return true;
 }
 
 
